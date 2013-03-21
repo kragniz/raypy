@@ -15,3 +15,9 @@
 #        * Set the pixel value to the colour of the object * brightness of light
 #    * else:
 #        * Set the pixel value to 0
+
+class Object(object):
+    def __init__(self, x, y, z):
+        self.x = x
+        self.y = y
+        self.z = z
