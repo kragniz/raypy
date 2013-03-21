@@ -21,3 +21,7 @@ class Object(object):
         self.x = x
         self.y = y
         self.z = z
+
+class Camera(Object):
+    def __init__(self, x, y, z, direction):
+        super(Camera, self).__init__(x, y, z)
