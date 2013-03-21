@@ -16,12 +16,20 @@
 #    * else:
 #        * Set the pixel value to 0
 
+import numpy as np
+
 class Object(object):
-    def __init__(self, x, y, z):
-        self.x = x
-        self.y = y
-        self.z = z
+    """An object in the scene"""
+    def __init__(self, position):
+        self.position = position
+
+    def __str__(self):
+        return 'Object at {}'.format(str(self.position))
 
 class Camera(Object):
-    def __init__(self, x, y, z, direction):
-        super(Camera, self).__init__(x, y, z)
+    """A camera rendering the scene"""
+    def __init__(self, position, direction):
+        super(Camera, self).__init__(position)
+
+if __name__ == '__main__':
+    c = Camera(np.array([0, 0, 0]), np.array([0, 0, -1]))
