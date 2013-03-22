@@ -29,16 +29,38 @@ class Object(object):
 
 class Camera(Object):
     """A camera rendering the scene"""
-    def __init__(self, position, direction, width=720, hight=486):
+    def __init__(self, position, direction, N=720, M=486):
         super(Camera, self).__init__(position)
+
+        self.z_p = 1 #focal length
         self.up = np.array([0, 1, 0])
         self.direction = direction
+
+        self.c = self.position + self.z_p * self.direction 
 
         self.u_x = (np.cross(self.direction, self.up) /
                    norm(np.cross(self.direction, self.up)))
         self.u_z = - self.direction
         self.u_y = np.cross(self.u_z, self.u_x)
 
+        self.m = M
+        self.n = N
+
+        self.hight = 1
+        self.width = 16/9.0
+        self.dydi = self.hight / float(self.m)
+        self.dxdi = self.width / float(self.n)
+
+    def rays(self):
+        for i in range(self.m):
+            py = -self.hight / 2 + self.dydi * (i + 0.5)
+            for j in range(self.n):
+                px = -self.width / 2 + self.dxdi * (j + 0.5)
+                p = self.c + px * self.u_x + py * self.u_y
+                yield (p - self.position) / norm(p - self.position)
+
 if __name__ == '__main__':
     c = Camera(np.array([0, 0, 0]), np.array([0, 0, -1]))
-    print c.u_x, c.u_z, c.u_y
+    r = c.rays()
+    for ray in r:
+        print ray
