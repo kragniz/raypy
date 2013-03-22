@@ -36,11 +36,15 @@ class Camera(Object):
         self.up = np.array([0, 1, 0])
         self.direction = direction
 
+        #centre of the image screen
         self.c = self.position + self.z_p * self.direction 
 
+        #horizontal screen direction`
         self.u_x = (np.cross(self.direction, self.up) /
                    norm(np.cross(self.direction, self.up)))
+        #vertical screen direction
         self.u_z = - self.direction
+        #normal to the viewscreen
         self.u_y = np.cross(self.u_z, self.u_x)
 
         self.m = M
@@ -48,7 +52,10 @@ class Camera(Object):
 
         self.hight = 1
         self.width = 16/9.0
+
+        #vertical distance between pixels
         self.dydi = self.hight / float(self.m)
+        #horizontal distance between pixels
         self.dxdi = self.width / float(self.n)
 
     def rays(self):
@@ -56,7 +63,10 @@ class Camera(Object):
             py = -self.hight / 2 + self.dydi * (i + 0.5)
             for j in range(self.n):
                 px = -self.width / 2 + self.dxdi * (j + 0.5)
+
+                #pixel center in space
                 p = self.c + px * self.u_x + py * self.u_y
+                #yield the ray
                 yield (p - self.position) / norm(p - self.position)
 
 if __name__ == '__main__':
