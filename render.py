@@ -17,6 +17,7 @@
 #        * Set the pixel value to 0
 
 import numpy as np
+from numpy.linalg import norm
 
 class Object(object):
     """An object in the scene"""
@@ -28,8 +29,16 @@ class Object(object):
 
 class Camera(Object):
     """A camera rendering the scene"""
-    def __init__(self, position, direction):
+    def __init__(self, position, direction, width=720, hight=486):
         super(Camera, self).__init__(position)
+        self.up = np.array([0, 1, 0])
+        self.direction = direction
+
+        self.u_x = (np.cross(self.direction, self.up) /
+                   norm(np.cross(self.direction, self.up)))
+        self.u_z = - self.direction
+        self.u_y = np.cross(self.u_z, self.u_x)
 
 if __name__ == '__main__':
     c = Camera(np.array([0, 0, 0]), np.array([0, 0, -1]))
+    print c.u_x, c.u_z, c.u_y
