@@ -59,6 +59,7 @@ class Camera(Object):
         self.dxdi = self.width / float(self.n)
 
     def rays(self):
+        """Return a generator containing a ray for each pixel in the image"""
         for i in range(self.m):
             py = -self.hight / 2 + self.dydi * (i + 0.5)
             for j in range(self.n):
