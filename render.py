@@ -29,7 +29,7 @@ class Object(object):
 
 class Camera(Object):
     """A camera rendering the scene"""
-    def __init__(self, position, direction, N=720, M=486):
+    def __init__(self, position, direction, N=720, M=486, scale=1):
         super(Camera, self).__init__(position)
 
         self.z_p = 1 #focal length
@@ -47,8 +47,8 @@ class Camera(Object):
         #normal to the viewscreen
         self.u_y = np.cross(self.u_z, self.u_x)
 
-        self.m = M
-        self.n = N
+        self.m = int(M * scale)
+        self.n = int(N * scale)
 
         self.hight = 1
         self.width = 16/9.0
@@ -71,7 +71,9 @@ class Camera(Object):
                 yield (p - self.position) / norm(p - self.position)
 
 if __name__ == '__main__':
-    c = Camera(np.array([0, 0, 0]), np.array([0, 0, -1]))
+    c = Camera(np.array([0, 0, 0]), np.array([0, 0, -1]), scale=0.5)
     r = c.rays()
+    rl = []
     for ray in r:
-        print ray
+        rl += [ray]
+    print len(rl)
