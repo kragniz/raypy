@@ -9,3 +9,13 @@ def save(data, filename):
         for j in i:
             outFile.write('{} {} {}  '.format(*j))
         outFile.write('\n')
+
+if __name__ == '__main__':
+    import numpy as np
+    image = np.array([
+        np.array([np.array([255,255,255]),np.array([255,255,255]),np.array([255,255,255])]),
+        np.array([np.array([255,255,255]),np.array([255,255,255]),np.array([255,255,255])]),
+        np.array([np.array([255,255,255]),np.array([255,0,0]),np.array([255,255,255])]),
+        np.array([np.array([255,255,255]),np.array([255,255,255]),np.array([255,255,255])]),
+        np.array([np.array([155,155,155]),np.array([155,155,155]),np.array([155,155,155])])])
+    save(image, 'test.ppm')
