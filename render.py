@@ -48,8 +48,12 @@ class Ray(object):
 
 class Camera(Object):
     """A camera rendering the scene"""
-    def __init__(self, position, direction, N=720, M=486, scale=1):
+    def __init__(self, position, direction, N=720, M=486,
+                 scale=1,
+                 orthographic=False):
         super(Camera, self).__init__(position)
+
+        self._orth = orthographic
 
         self.z_p = 1 #focal length
         self.up = np.array([0, 1, 0])
@@ -88,13 +92,17 @@ class Camera(Object):
                 #pixel center in space
                 p = self.c + px * self.u_x + py * self.u_y
                 #direction vector
-                u = (p - self.position) / norm(p - self.position)
+                if self._orth:
+                    u = self.direction
+                else:
+                    u = (p - self.position) / norm(p - self.position)
                 yield Ray(p, u)
             yield None #next row
 
 if __name__ == '__main__':
     import pixmap
-    c = Camera(np.array([0, 0, 0]), np.array([0, 0, -1]), scale=0.25)
+    c = Camera(np.array([0, 0, 0]), np.array([0, 0, -1]), scale=0.25,
+            orthographic=True)
     r = c.rays()
     rl, row = [], []
     for ray in r:
