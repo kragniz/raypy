@@ -3,7 +3,7 @@ def save(data, filename):
     hight = len(data[0])
 
     outFile = open(filename, 'w')
-    outFile.write('P3\n{hight} {width}\n255\n'.format(width=width, hight=hight))
+    outFile.write('P3\n{hight} {width}\n4096\n'.format(width=width, hight=hight))
 
     for i in data:
         for j in i:

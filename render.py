@@ -69,11 +69,16 @@ class Camera(Object):
                 p = self.c + px * self.u_x + py * self.u_y
                 #yield the ray
                 yield (p - self.position) / norm(p - self.position)
+            yield None
 
 if __name__ == '__main__':
-    c = Camera(np.array([0, 0, 0]), np.array([0, 0, -1]), scale=0.5)
+    import pixmap
+    c = Camera(np.array([0, 0, 0]), np.array([0, 0, -1]), scale=0.25)
     r = c.rays()
-    rl = []
+    rl, row = [], []
     for ray in r:
-        rl += [ray]
-    print len(rl)
+        if ray is not None:
+            row += [np.array([int(4096*(np.dot(ray, np.array([0,0,-1]))))]*3)]
+        else:
+            rl += [np.array(row)]
+    pixmap.save(rl, 'vectors.ppm')
