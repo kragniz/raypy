@@ -27,6 +27,25 @@ class Object(object):
     def __str__(self):
         return 'Object at {}'.format(str(self.position))
 
+class Ray(object):
+    def __init__(self, position, direction):
+        self._p = position
+        self._u = direction
+
+    @property
+    def p(self):
+        return self._p
+
+    @property
+    def u(self):
+        return self._u
+
+    def position(self):
+        return self.p
+
+    def direction(self):
+        return self.u
+
 class Camera(Object):
     """A camera rendering the scene"""
     def __init__(self, position, direction, N=720, M=486, scale=1):
@@ -50,8 +69,9 @@ class Camera(Object):
         self.m = int(M * scale)
         self.n = int(N * scale)
 
-        self.hight = 1
-        self.width = 16/9.0
+        factor = 0.5
+        self.hight = (1)*factor
+        self.width = (16/9.0)*factor
 
         #vertical distance between pixels
         self.dydi = self.hight / float(self.m)
@@ -67,9 +87,10 @@ class Camera(Object):
 
                 #pixel center in space
                 p = self.c + px * self.u_x + py * self.u_y
-                #yield the ray
-                yield (p - self.position) / norm(p - self.position)
-            yield None
+                #direction vector
+                u = (p - self.position) / norm(p - self.position)
+                yield Ray(p, u)
+            yield None #next row
 
 if __name__ == '__main__':
     import pixmap
@@ -78,7 +99,7 @@ if __name__ == '__main__':
     rl, row = [], []
     for ray in r:
         if ray is not None:
-            row += [np.array([int(4096*(np.dot(ray, np.array([0,0,-1]))))]*3)]
+            row += [np.array([int(4096*(np.dot(ray.u, np.array([0,0,-1]))))]*3)]
         else:
             rl += [np.array(row)]
     pixmap.save(rl, 'vectors.ppm')
