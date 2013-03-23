@@ -9,6 +9,10 @@ class Object(object):
     def __str__(self):
         return 'Object at {}'.format(str(self.position))
 
+    @property
+    def p(self):
+        return self.position
+
 class Ray(object):
     def __init__(self, position, direction):
         self._p = position
