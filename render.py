@@ -44,7 +44,7 @@ class Camera(Object):
         #centre of the image screen
         self.c = self.position + self.z_p * self.direction 
 
-        #horizontal screen direction`
+        #horizontal screen direction
         self.u_x = (np.cross(self.direction, self.up) /
                    norm(np.cross(self.direction, self.up)))
         #vertical screen direction
