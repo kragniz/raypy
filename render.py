@@ -85,6 +85,11 @@ class Camera(Object):
                 yield Ray(p, u)
             yield None #next row
 
+class Plane(Object):
+    def __init__(self, position, normal):
+        super(Plane, self).__init__(position)
+        self.n = normal
+
 if __name__ == '__main__':
     import pixmap
     c = Camera(np.array([0, 0, 0]), np.array([0, 0, -1]), scale=0.25,
