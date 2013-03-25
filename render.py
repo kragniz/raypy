@@ -85,8 +85,12 @@ class Camera(Object):
                 yield Ray(p, u)
             yield None #next row
 
-class Plane(Object):
-    def __init__(self, position, normal):
+class GroundPlane(Object):
+    def __init__(self, position=None, normal=None):
+        if position is None:
+            position = np.array([0, 0, 0])
+        if normal is None:
+            normal = np.array([0, 1, 0])
         super(Plane, self).__init__(position)
         self.n = normal
 
