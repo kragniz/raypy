@@ -32,6 +32,10 @@ class Ray(object):
     def direction(self):
         return self.u
 
+    def x(self, t):
+        """Return the point t units along the ray"""
+        return self.p + t * self.u
+
 class Camera(Object):
     """A camera rendering the scene"""
     def __init__(self, position, direction, N=720, M=486,
