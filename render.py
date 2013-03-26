@@ -34,7 +34,8 @@ class Ray(object):
 
     def x(self, t):
         """Return the point t units along the ray"""
-        return self.p + t * self.u
+        if t is not None:
+            return self.p + t * self.u
 
 class Vector(np.ndarray):
     """Shorthand for a three dimensional numpy array"""
@@ -103,17 +104,20 @@ class GroundPlane(Object):
         super(GroundPlane, self).__init__(position)
         self.n = normal
 
+    def intersectionDistance(self, ray):
+        d = np.dot(self.n, ray.u)
+        if d != 0:
+            return - (np.dot(self.n, (ray.p - self.p)) / d)
+        else:
+            return None
+
     def intersection(self, ray):
-        return ray.x(
-                 -(np.dot(self.n, (ray.p - self.p))
-                                /
-                       np.dot(self.n, ray.u))
-                   )
+        return ray.x(self.intersectionDistance(ray))
 
 
 if __name__ == '__main__':
     import pixmap
-    r = Ray(Vector(1, 1, 0), Vector(0, -0.707107, -0.707107))
+    r = Ray(Vector(1, 1, 0), Vector(1, 0, 0))
     g = GroundPlane()
     print g.intersection(r)
     c = Camera(np.array([0, 0, 0]), np.array([0, 0, -1]), scale=0.25,
