@@ -36,6 +36,11 @@ class Ray(object):
         """Return the point t units along the ray"""
         return self.p + t * self.u
 
+class Vector(np.ndarray):
+    """Shorthand for a three dimensional numpy array"""
+    def __new__(self, x, y, z):
+        return np.array([x, y, z])
+
 class Camera(Object):
     """A camera rendering the scene"""
     def __init__(self, position, direction, N=720, M=486,
@@ -100,6 +105,8 @@ class GroundPlane(Object):
 
 if __name__ == '__main__':
     import pixmap
+    v = Vector(0, 1, 0)
+    print v
     c = Camera(np.array([0, 0, 0]), np.array([0, 0, -1]), scale=0.25,
             orthographic=True)
     r = c.rays()
