@@ -100,13 +100,22 @@ class GroundPlane(Object):
             position = np.array([0, 0, 0])
         if normal is None:
             normal = np.array([0, 1, 0])
-        super(Plane, self).__init__(position)
+        super(GroundPlane, self).__init__(position)
         self.n = normal
+
+    def intersection(self, ray):
+        return ray.x(
+                 -(np.dot(self.n, (ray.p - self.p))
+                                /
+                       np.dot(self.n, ray.u))
+                   )
+
 
 if __name__ == '__main__':
     import pixmap
-    v = Vector(0, 1, 0)
-    print v
+    r = Ray(Vector(1, 1, 0), Vector(0, -0.707107, -0.707107))
+    g = GroundPlane()
+    print g.intersection(r)
     c = Camera(np.array([0, 0, 0]), np.array([0, 0, -1]), scale=0.25,
             orthographic=True)
     r = c.rays()
