@@ -120,6 +120,18 @@ class GroundPlane(Object):
     def intersection(self, ray):
         return ray.x(self.intersectionDistance(ray))
 
+class Sphere(Object):
+    def __init__(self, position, radius):
+        super(Sphere, self).__init__(position)
+        self.radius = radius
+
+    def intersectionDistance(self, ray):
+        d = np.dot(ray.u, (self.p - ray.p))
+        if abs(d) > self.radius:
+            return None
+        else:
+            return d
+
 
 if __name__ == '__main__':
     import pixmap
