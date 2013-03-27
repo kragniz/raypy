@@ -1,3 +1,4 @@
+import math
 import numpy as np
 from numpy.linalg import norm
 
@@ -41,6 +42,11 @@ class Vector(np.ndarray):
     """Shorthand for a three dimensional numpy array"""
     def __new__(self, x, y, z):
         return np.array([x, y, z])
+
+    @classmethod
+    def normalize(cls, x, y, z):
+        length = math.sqrt(x**2 + y**2 + z**2)
+        return cls(x/length, y/length, z/length)
 
 class Camera(Object):
     """A camera rendering the scene"""
