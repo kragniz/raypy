@@ -57,7 +57,7 @@ class Camera(Object):
 
         self._orth = orthographic
 
-        self.z_p = 0.25 #focal length
+        self.z_p = 1 #focal length
         self.up = Vector(0, 1, 0)
         self.direction = direction
 
@@ -75,7 +75,7 @@ class Camera(Object):
         self.m = int(M * scale)
         self.n = int(N * scale)
 
-        factor = 0.25
+        factor = 0.5
         self.hight = (1)*factor
         self.width = (16/9.0)*factor
 
@@ -126,52 +126,27 @@ class Sphere(Object):
         self.radius = radius
 
     def intersectionDistance(self, ray):
-        d = np.dot(ray.u, (self.p - ray.p))
-        if abs(d) > self.radius:
-            return None
-        else:
-            return d
+        return np.dot(ray.u, (self.p - ray.p))
 
+    def intersects(self, ray):
+        x = ray.x(self.intersectionDistance(ray))
+        return norm(x-self.position) <= self.radius
 
 if __name__ == '__main__':
     import pixmap
-    s = Sphere(Vector(0,0,0), 0.25)
-    furthest = 0
-    nearest = 9999999
-    count = 0
-    for i in [(i/100.0)-0.5 for i in range(0, 100, 1)]:
-        c = Camera(Vector(0, 2, 0), Vector.normalize(0, i, 1), scale=0.25)
-        r = c.rays()
-        dists = []
-        for ray in r:
-            if ray is not None:
-                d = s.intersectionDistance(ray)
-                if d is not None:
-                    col = 2**15
-                    if d > furthest:
-                        furthest = d
-                        col = 0
-                    if d < nearest:
-                        nearest = d
-                        col = 0
-                    dists += [d]
-                else:
-                    dists += [float('nan')]
+    s = Sphere(Vector(0,0,0), 1)
+    cpos = Vector(0, 0, 8)
+    u = Vector.normalize(0.25, 0, 1)
+    print u
+    c = Camera(cpos, u, scale=0.25)
+    image, row = [], []
+    for r in c.rays():
+        if r is not None:
+            if s.intersects(r):
+                row += [[10000, 0, 0]]
             else:
-                dists += [None]
-        dists = [(d-nearest)/float(furthest-nearest) if d is not None else None for d in dists]
-        row = []
-        main = []
-        for d in dists:
-            if d is not None:
-                if math.isnan(d):
-                    row += [Vector(2**15,0,0)]
-                else:
-                    v = int((2**16)*d)
-                    row += [Vector(v,v,v)]
-            else:
-                main += [row]
-                row = []
-        pixmap.save(main, 'out/out%s.ppm' % count)
-        print 'out/out%s.ppm' % count
-        count += 1
+                row += [[65500, 65500, 65500]]
+        else:
+            image += [row]
+            row = []
+    pixmap.save(image, 'out/sphere.ppm')
