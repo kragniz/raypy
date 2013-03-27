@@ -120,13 +120,18 @@ if __name__ == '__main__':
     r = Ray(Vector(1, 1, 0), Vector(1, 0, 0))
     g = GroundPlane()
     print g.intersection(r)
-    c = Camera(np.array([0, 0, 0]), np.array([0, 0, -1]), scale=0.25,
-            orthographic=True)
+    c = Camera(Vector(0, 1, 0), Vector(0, -0.447214, -0.894427), scale=0.25)
     r = c.rays()
     rl, row = [], []
     for ray in r:
         if ray is not None:
-            row += [np.array([int(4096*(np.dot(ray.u, np.array([0,0,-1]))))]*3)]
+            d = g.intersectionDistance(ray)
+            if d is not None:
+                d = int((4096*d) % 4096)
+                row += [np.array([d,d,d])]
+            else:
+                row += [Vector(0,0,0)]
+                #row += [np.array([int(4096*(np.dot(ray.u, np.array([0,0,-1]))))]*3)]
         else:
             rl += [np.array(row)]
     pixmap.save(rl, 'vectors.ppm')
