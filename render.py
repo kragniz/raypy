@@ -57,8 +57,8 @@ class Camera(Object):
 
         self._orth = orthographic
 
-        self.z_p = 1 #focal length
-        self.up = np.array([0, 1, 0])
+        self.z_p = 0.25 #focal length
+        self.up = Vector(0, 1, 0)
         self.direction = direction
 
         #centre of the image screen
@@ -75,7 +75,7 @@ class Camera(Object):
         self.m = int(M * scale)
         self.n = int(N * scale)
 
-        factor = 0.5
+        factor = 0.25
         self.hight = (1)*factor
         self.width = (16/9.0)*factor
 
@@ -135,21 +135,43 @@ class Sphere(Object):
 
 if __name__ == '__main__':
     import pixmap
-    r = Ray(Vector(1, 1, 0), Vector(1, 0, 0))
-    g = GroundPlane()
-    print g.intersection(r)
-    c = Camera(Vector(0, 1, 0), Vector(0, -0.447214, -0.894427), scale=0.25)
-    r = c.rays()
-    rl, row = [], []
-    for ray in r:
-        if ray is not None:
-            d = g.intersectionDistance(ray)
-            if d is not None:
-                d = int((4096*d) % 4096)
-                row += [np.array([d,d,d])]
+    s = Sphere(Vector(0,0,0), 0.25)
+    furthest = 0
+    nearest = 9999999
+    count = 0
+    for i in [(i/100.0)-0.5 for i in range(0, 100, 1)]:
+        c = Camera(Vector(0, 2, 0), Vector.normalize(0, i, 1), scale=0.25)
+        r = c.rays()
+        dists = []
+        for ray in r:
+            if ray is not None:
+                d = s.intersectionDistance(ray)
+                if d is not None:
+                    col = 2**15
+                    if d > furthest:
+                        furthest = d
+                        col = 0
+                    if d < nearest:
+                        nearest = d
+                        col = 0
+                    dists += [d]
+                else:
+                    dists += [float('nan')]
             else:
-                row += [Vector(0,0,0)]
-                #row += [np.array([int(4096*(np.dot(ray.u, np.array([0,0,-1]))))]*3)]
-        else:
-            rl += [np.array(row)]
-    pixmap.save(rl, 'vectors.ppm')
+                dists += [None]
+        dists = [(d-nearest)/float(furthest-nearest) if d is not None else None for d in dists]
+        row = []
+        main = []
+        for d in dists:
+            if d is not None:
+                if math.isnan(d):
+                    row += [Vector(2**15,0,0)]
+                else:
+                    v = int((2**16)*d)
+                    row += [Vector(v,v,v)]
+            else:
+                main += [row]
+                row = []
+        pixmap.save(main, 'out/out%s.ppm' % count)
+        print 'out/out%s.ppm' % count
+        count += 1
