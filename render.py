@@ -134,19 +134,34 @@ class Sphere(Object):
 
 if __name__ == '__main__':
     import pixmap
-    s = Sphere(Vector(0,0,0), 1)
-    cpos = Vector(0, 0, 8)
-    u = Vector.normalize(0.25, 0, 1)
-    print u
+    s = Sphere(Vector(0,0,0), 2)
+    cpos = Vector(0, 0, 5)
+    u = Vector.normalize(0, 0, -1)
     c = Camera(cpos, u, scale=0.25)
-    image, row = [], []
+    image = []
+    l, h = 2**20, 0
     for r in c.rays():
         if r is not None:
             if s.intersects(r):
-                row += [[10000, 0, 0]]
+                col = s.intersectionDistance(r)
+                if col > h:
+                    h = col
+                if col < l:
+                    l = col
+                image += [col]
             else:
-                row += [[65500, 65500, 65500]]
+                image += [0]
         else:
-            image += [row]
+            image += [None]
+    row = []
+    imagePixels = []
+    for p in image:
+        if p is not None:
+            if p > 0:
+                col = int((2**16) * (p-l)/float(h))*5
+            else: col = 0
+            row += [[col,col,col]]
+        else:
+            imagePixels += [row]
             row = []
-    pixmap.save(image, 'out/sphere.ppm')
+    pixmap.save(imagePixels, 'out/sphere.ppm')
