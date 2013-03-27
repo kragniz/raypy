@@ -17,9 +17,9 @@ class Object(object):
 class GroundPlane(Object):
     def __init__(self, position=None, normal=None):
         if position is None:
-            position = np.array([0, 0, 0])
+            position = Vector(0, 0, 0)
         if normal is None:
-            normal = np.array([0, 1, 0])
+            normal = Vector(0, 1, 0)
         super(GroundPlane, self).__init__(position)
         self.n = normal
 
