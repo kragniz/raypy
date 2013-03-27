@@ -1,54 +1,10 @@
 import math
 import numpy as np
 from numpy.linalg import norm
+import objects
+from geometry import Ray, Vector
 
-class Object(object):
-    """An object in the scene"""
-    def __init__(self, position):
-        self.position = position
-
-    def __str__(self):
-        return 'Object at {}'.format(str(self.position))
-
-    @property
-    def p(self):
-        return self.position
-
-class Ray(object):
-    def __init__(self, position, direction):
-        self._p = position
-        self._u = direction
-
-    @property
-    def p(self):
-        return self._p
-
-    @property
-    def u(self):
-        return self._u
-
-    def position(self):
-        return self.p
-
-    def direction(self):
-        return self.u
-
-    def x(self, t):
-        """Return the point t units along the ray"""
-        if t is not None:
-            return self.p + t * self.u
-
-class Vector(np.ndarray):
-    """Shorthand for a three dimensional numpy array"""
-    def __new__(self, x, y, z):
-        return np.array([x, y, z])
-
-    @classmethod
-    def normalize(cls, x, y, z):
-        length = math.sqrt(x**2 + y**2 + z**2)
-        return cls(x/length, y/length, z/length)
-
-class Camera(Object):
+class Camera(objects.Object):
     """A camera rendering the scene"""
     def __init__(self, position, direction, N=720, M=486,
                  scale=1,
@@ -101,41 +57,10 @@ class Camera(Object):
                 yield Ray(p, u)
             yield None #next row
 
-class GroundPlane(Object):
-    def __init__(self, position=None, normal=None):
-        if position is None:
-            position = np.array([0, 0, 0])
-        if normal is None:
-            normal = np.array([0, 1, 0])
-        super(GroundPlane, self).__init__(position)
-        self.n = normal
-
-    def intersectionDistance(self, ray):
-        d = np.dot(self.n, ray.u)
-        if d != 0:
-            return - (np.dot(self.n, (ray.p - self.p)) / d)
-        else:
-            return None
-
-    def intersection(self, ray):
-        return ray.x(self.intersectionDistance(ray))
-
-class Sphere(Object):
-    def __init__(self, position, radius):
-        super(Sphere, self).__init__(position)
-        self.radius = radius
-
-    def intersectionDistance(self, ray):
-        return np.dot(ray.u, (self.p - ray.p))
-
-    def intersects(self, ray):
-        x = ray.x(self.intersectionDistance(ray))
-        return norm(x-self.position) <= self.radius
-
 if __name__ == '__main__':
     import pixmap
-    s = Sphere(Vector(0,0,0), 2)
-    cpos = Vector(0, 0, 5)
+    s = objects.Sphere(Vector(0,0,0), 2)
+    cpos = Vector(0, 0, 6)
     u = Vector.normalize(0, 0, -1)
     c = Camera(cpos, u, scale=0.25)
     image = []
@@ -150,7 +75,7 @@ if __name__ == '__main__':
                     l = col
                 image += [col]
             else:
-                image += [0]
+                image += [-1]
         else:
             image += [None]
     row = []
@@ -159,8 +84,8 @@ if __name__ == '__main__':
         if p is not None:
             if p > 0:
                 col = int((2**16) * (p-l)/float(h))*5
-            else: col = 0
-            row += [[col,col,col]]
+                row += [[col,col,col]]
+            else: row += [[2**16, 0, 0]]
         else:
             imagePixels += [row]
             row = []
