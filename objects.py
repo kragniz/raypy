@@ -15,6 +15,7 @@ class Object(object):
         return self.position
 
 class GroundPlane(Object):
+    """An infinite flat surface facing a normal"""
     def __init__(self, position=None, normal=None):
         if position is None:
             position = Vector(0, 0, 0)
@@ -34,6 +35,7 @@ class GroundPlane(Object):
         return ray.x(self.intersectionDistance(ray))
 
 class Sphere(Object):
+    """A sphere with a position and radius"""
     def __init__(self, position, radius):
         super(Sphere, self).__init__(position)
         self.radius = radius
